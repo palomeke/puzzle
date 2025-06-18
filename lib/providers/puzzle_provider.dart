@@ -16,6 +16,7 @@ class PuzzleProvider extends ChangeNotifier {
   bool isDarkMode = false;
   Difficulty difficulty = Difficulty.medium;
   GameMode mode = GameMode.numeric;
+  List<int> suggestion = [];
 
   Timer? _timer;
   Duration elapsed = Duration.zero;
@@ -76,6 +77,7 @@ class PuzzleProvider extends ChangeNotifier {
       tiles[i] = tiles[i].copyWith(currentIndex: indices[i]);
     }
     notifyListeners();
+    updateSuggestion();
   }
 
   bool _isSolvable(List<int> positions) {
@@ -164,6 +166,18 @@ class PuzzleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Calcula algunos movimientos sugeridos utilizando el auto-solver.
+  Future<void> updateSuggestion() async {
+    final solver = AutoSolveService(gridSize);
+    final moves = await solver.solve(tiles);
+    suggestion = moves.take(5).toList();
+    notifyListeners();
+  }
+
+  /// Resuelve el puzzle automáticamente.
+  ///
+  /// Nota: en modo [Difficulty.hard] (5x5) el algoritmo puede agotar la
+  /// memoria disponible y la aplicación se cierra de forma inesperada.
   Future<void> autoSolve() async {
     if (isAutoSolving) return;
     isAutoSolving = true;
@@ -179,6 +193,7 @@ class PuzzleProvider extends ChangeNotifier {
     }
 
     isAutoSolving = false;
+    await updateSuggestion();
     notifyListeners();
   }
 

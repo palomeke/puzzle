@@ -58,6 +58,24 @@ class GameScreen extends StatelessWidget {
                 width: double.infinity,
                 height: double.infinity,
               ),
+              Positioned(
+                top: 100,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Sugerencia: ${provider.suggestion.join(', ')}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
               SafeArea(
                 child: Center(
                   child: Container(

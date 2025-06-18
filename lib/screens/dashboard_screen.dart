@@ -36,6 +36,20 @@ class DashboardScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: 24),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        provider.isSoundOn
+                            ? Icons.music_note
+                            : Icons.music_off,
+                        color: Colors.white,
+                      ),
+                      onPressed: provider.toggleSound,
+                    ),
+                  ],
+                ),
                 Hero(
                   tag: 'logo',
                   child: Image.asset('assets/logo.png', height: 360),
