@@ -16,6 +16,7 @@ class PuzzleProvider extends ChangeNotifier {
   bool isDarkMode = false;
   Difficulty difficulty = Difficulty.medium;
   GameMode mode = GameMode.numeric;
+  List<int> suggestion = [];
 
   Timer? _timer;
   Duration elapsed = Duration.zero;
@@ -23,6 +24,9 @@ class PuzzleProvider extends ChangeNotifier {
   bool isVictory = false;
   int? lastTappedIndex;
   bool isAutoSolving = false;
+
+  Duration autoSolveSpeed = const Duration(milliseconds: 300);
+  bool _cancelAutoSolve = false;
 
   void initialize(
     GameMode selectedMode,
@@ -76,6 +80,7 @@ class PuzzleProvider extends ChangeNotifier {
       tiles[i] = tiles[i].copyWith(currentIndex: indices[i]);
     }
     notifyListeners();
+    updateSuggestion();
   }
 
   bool _isSolvable(List<int> positions) {
@@ -134,6 +139,9 @@ class PuzzleProvider extends ChangeNotifier {
       if (!isTimerRunning) startTimer();
       notifyListeners();
       _checkVictory();
+      if (!fromAuto) {
+        updateSuggestion();
+      }
     } else {
       notifyListeners();
     }
@@ -149,6 +157,8 @@ class PuzzleProvider extends ChangeNotifier {
   void _checkVictory() {
     if (tiles.every((t) => t.currentIndex == t.correctIndex)) {
       isVictory = true;
+      isAutoSolving = false;
+      _cancelAutoSolve = false;
       stopTimer();
       notifyListeners();
     }
@@ -164,14 +174,61 @@ class PuzzleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
+  Future<void> updateSuggestion() async {
+    final solver = AutoSolveService(gridSize);
+    final moves = await solver.solve(tiles);
+    suggestion = moves.isNotEmpty ? [moves.first] : [];
+    notifyListeners();
+  }
+
+  /// Resuelve el puzzle automáticamente.
+  ///
+  /// Nota: en modo [Difficulty.hard] (5x5) el algoritmo puede agotar la
+  /// memoria disponible y la aplicación se cierra de forma inesperada.
+  Future<void> autoSolve() async {
+    if (isAutoSolving) return;
+    if (difficulty == Difficulty.hard) {
+      // A* no es viable para 5x5; evitar bloqueo de la app
+      return;
+    }
+    isAutoSolving = true;
+    _cancelAutoSolve = false;
+
   Future<void> autoSolve() async {
     if (isAutoSolving) return;
     isAutoSolving = true;
+
     notifyListeners();
 
     final solver = AutoSolveService(gridSize);
     final moves = await solver.solve(tiles);
     for (final id in moves) {
+
+      if (_cancelAutoSolve) break;
+      final tile =
+          tiles.firstWhere((t) => (t.number ?? t.correctIndex + 1) == id);
+      moveTile(tile.currentIndex, true);
+      if (_cancelAutoSolve) break;
+      await Future.delayed(autoSolveSpeed);
+    }
+
+    isAutoSolving = false;
+    _cancelAutoSolve = false;
+    await updateSuggestion();
+    notifyListeners();
+  }
+
+  void setAutoSolveSpeed(double ms) {
+    autoSolveSpeed = Duration(milliseconds: ms.round());
+    notifyListeners();
+  }
+
+  void stopAutoSolve() {
+    _cancelAutoSolve = true;
+  }
+
+=======
       final tile =
           tiles.firstWhere((t) => (t.number ?? t.correctIndex + 1) == id);
       moveTile(tile.currentIndex, true);

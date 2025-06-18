@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/puzzle_provider.dart';
+import '../models/difficulty.dart';
 import '../screens/victory_screen.dart';
 import '../widgets/tile_widget.dart';
 
@@ -58,6 +59,24 @@ class GameScreen extends StatelessWidget {
                 width: double.infinity,
                 height: double.infinity,
               ),
+              Positioned(
+                top: 100,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.black54,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      'Sugerencia: ${provider.suggestion.isNotEmpty ? provider.suggestion.first : '-'}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
               SafeArea(
                 child: Center(
                   child: Container(
@@ -113,10 +132,68 @@ class GameScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed:
+
+                        provider.isAutoSolving || provider.difficulty == Difficulty.hard
+                            ? null
+                            : () => provider.autoSolve(),
+                  ),
+                ),
+              ),
+              if (provider.isAutoSolving)
+                Positioned(
+                  bottom: 130,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.stop, color: Colors.white),
+                      label: const Text(
+                        'Detener',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.redAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                      onPressed: provider.stopAutoSolve,
+                    ),
+                  ),
+                ),
+              Positioned(
+                bottom: 180,
+                left: 16,
+                right: 16,
+                child: Column(
+                  children: [
+                    const Text(
+                      'Velocidad del auto solver',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    Slider(
+                      value: provider.autoSolveSpeed.inMilliseconds.toDouble(),
+                      min: 100,
+                      max: 1000,
+                      divisions: 9,
+                      label:
+                          '${provider.autoSolveSpeed.inMilliseconds} ms',
+                      onChanged: (v) =>
+                          provider.setAutoSolveSpeed(v),
+                    ),
+                  ],
+                ),
+              ),
+
                         provider.isAutoSolving ? null : () => provider.autoSolve(),
                   ),
                 ),
               ),
+
               // Botón de reinicio permanente
               Positioned(
                 bottom: 24,

@@ -45,9 +45,15 @@ class AutoSolveService {
     final sorted = [...initialTiles]
       ..sort((a, b) => a.currentIndex.compareTo(b.currentIndex));
     final start = sorted
+=======
+
+    final sorted = [...initialTiles]
+      ..sort((a, b) => a.currentIndex.compareTo(b.currentIndex));
+    final start = sorted
 
     final start = initialTiles
  main
+
         .map((t) => t.isEmpty ? 0 : (t.number ?? t.correctIndex + 1))
         .toList();
     if (ListEquality().equals(start, goalState)) return [];
