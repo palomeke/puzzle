@@ -41,9 +41,23 @@ class AutoSolveService {
   /// Cada ficha se representa por su `number` en modo numérico o por su
   /// índice correcto en modo imagen. El espacio vacío se representa con 0.
   Future<List<int>> solve(List<Tile> initialTiles) async {
+
     final sorted = [...initialTiles]
       ..sort((a, b) => a.currentIndex.compareTo(b.currentIndex));
     final start = sorted
+
+
+    final sorted = [...initialTiles]
+      ..sort((a, b) => a.currentIndex.compareTo(b.currentIndex));
+    final start = sorted
+
+    final sorted = [...initialTiles]
+      ..sort((a, b) => a.currentIndex.compareTo(b.currentIndex));
+    final start = sorted
+
+    final start = initialTiles
+ main
+
         .map((t) => t.isEmpty ? 0 : (t.number ?? t.correctIndex + 1))
         .toList();
     if (ListEquality().equals(start, goalState)) return [];

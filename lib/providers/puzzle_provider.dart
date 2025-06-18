@@ -173,6 +173,7 @@ class PuzzleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+
   /// Calcula un conjunto de movimientos sugeridos utilizando el auto-solver.
   ///
   /// Se devuelven solamente los primeros pasos para no bloquear la
@@ -181,6 +182,13 @@ class PuzzleProvider extends ChangeNotifier {
     final solver = AutoSolveService(gridSize);
     final moves = await solver.solve(tiles);
     suggestion = moves.take(5).toList();
+
+
+  Future<void> updateSuggestion() async {
+    final solver = AutoSolveService(gridSize);
+    final moves = await solver.solve(tiles);
+    suggestion = moves.isNotEmpty ? [moves.first] : [];
+
     notifyListeners();
   }
 
@@ -190,13 +198,29 @@ class PuzzleProvider extends ChangeNotifier {
   /// memoria disponible y la aplicación se cierra de forma inesperada.
   Future<void> autoSolve() async {
     if (isAutoSolving) return;
+
     isAutoSolving = true;
     _cancelAutoSolve = false;
+
+    if (difficulty == Difficulty.hard) {
+      // A* no es viable para 5x5; evitar bloqueo de la app
+      return;
+    }
+    isAutoSolving = true;
+    _cancelAutoSolve = false;
+
+  Future<void> autoSolve() async {
+    if (isAutoSolving) return;
+    isAutoSolving = true;
+
+
     notifyListeners();
 
     final solver = AutoSolveService(gridSize);
     final moves = await solver.solve(tiles);
     for (final id in moves) {
+
+
       if (_cancelAutoSolve) break;
       final tile =
           tiles.firstWhere((t) => (t.number ?? t.correctIndex + 1) == id);
@@ -219,6 +243,18 @@ class PuzzleProvider extends ChangeNotifier {
   void stopAutoSolve() {
     _cancelAutoSolve = true;
   }
+
+
+      final tile =
+          tiles.firstWhere((t) => (t.number ?? t.correctIndex + 1) == id);
+      moveTile(tile.currentIndex, true);
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+
+    isAutoSolving = false;
+    notifyListeners();
+  }
+
 
   void setDifficulty(Difficulty d) {
     difficulty = d;

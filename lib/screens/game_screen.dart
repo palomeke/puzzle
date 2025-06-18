@@ -71,9 +71,13 @@ class GameScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
+
                       provider.suggestion.isEmpty
                           ? 'Sugerencia: -'
                           : 'Sugerencia: ${provider.suggestion.join(', ')}',
+
+                      'Sugerencia: ${provider.suggestion.isNotEmpty ? provider.suggestion.first : '-'}',
+
                       style: const TextStyle(color: Colors.white),
                     ),
                   ),
@@ -134,7 +138,14 @@ class GameScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed:
+
                         provider.isAutoSolving ? null : () => provider.autoSolve(),
+
+
+                        provider.isAutoSolving || provider.difficulty == Difficulty.hard
+                            ? null
+                            : () => provider.autoSolve(),
+
                   ),
                 ),
               ),
@@ -165,7 +176,11 @@ class GameScreen extends StatelessWidget {
                   ),
                 ),
               Positioned(
-                bottom: 110,
+
+           
+
+                bottom: 180,
+
                 left: 16,
                 right: 16,
                 child: Column(
@@ -187,6 +202,14 @@ class GameScreen extends StatelessWidget {
                   ],
                 ),
               ),
+
+
+                        provider.isAutoSolving ? null : () => provider.autoSolve(),
+                  ),
+                ),
+              ),
+
+
               // Botón de reinicio permanente
               Positioned(
                 bottom: 24,
