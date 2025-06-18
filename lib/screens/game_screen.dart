@@ -140,7 +140,7 @@ class GameScreen extends StatelessWidget {
                 ),
               ),
               if (provider.isAutoSolving)
-                Positioned(
+                bottom: 110,
                   bottom: 130,
                   left: 0,
                   right: 0,
