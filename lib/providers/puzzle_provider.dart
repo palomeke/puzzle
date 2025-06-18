@@ -190,10 +190,6 @@ class PuzzleProvider extends ChangeNotifier {
   /// memoria disponible y la aplicación se cierra de forma inesperada.
   Future<void> autoSolve() async {
     if (isAutoSolving) return;
-    if (difficulty == Difficulty.hard) {
-      // A* no es viable para 5x5; evitar bloqueo de la app
-      return;
-    }
     isAutoSolving = true;
     _cancelAutoSolve = false;
     notifyListeners();

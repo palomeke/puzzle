@@ -20,10 +20,11 @@
 ## 3. Flujo de trabajo
 1. La app inicia en `WelcomeScreen`. Tras una animación inicial, redirige al `DashboardScreen`.
 2. En el tablero se eligen modo (numérico o imagen) y dificultad; se pueden cargar imágenes propias.
-3. `PuzzleProvider.initialize()` crea las fichas y mezcla la posición inicial verificando solvencia.
-4. El usuario mueve las fichas; el estado se actualiza mediante el provider. Se muestran tiempo transcurrido, número de movimientos y sugerencias calculadas con A*.
-5. Es posible solicitar la resolución automática con `autoSolve()` salvo en dificultad "hard" (5x5) para evitar cierres inesperados.
-6. Al completar el puzzle se navega a `VictoryScreen` donde se muestra un resumen y se puede guardar la puntuación en Firebase.
+3. Todas las dificultades (easy, medium y hard) permiten jugar tanto en modo numérico como con imágenes.
+4. `PuzzleProvider.initialize()` crea las fichas y mezcla la posición inicial verificando solvencia.
+5. El usuario mueve las fichas; el estado se actualiza mediante el provider. Se muestran tiempo transcurrido, número de movimientos y sugerencias calculadas con A*.
+6. Es posible solicitar la resolución automática con `autoSolve()` en todas las dificultades. En modo "hard" (5x5) puede tardar más y consumir más memoria.
+7. Al completar el puzzle se navega a `VictoryScreen` donde se muestra un resumen y se puede guardar la puntuación en Firebase.
 
 ## 4. Dependencias principales
 - `provider` para la gestión de estado.

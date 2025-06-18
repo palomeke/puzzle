@@ -134,9 +134,7 @@ class GameScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed:
-                        provider.isAutoSolving || provider.difficulty == Difficulty.hard
-                            ? null
-                            : () => provider.autoSolve(),
+                        provider.isAutoSolving ? null : () => provider.autoSolve(),
                   ),
                 ),
               ),
