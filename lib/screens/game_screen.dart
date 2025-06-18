@@ -92,6 +92,33 @@ class GameScreen extends StatelessWidget {
               ),
               // Botón de reinicio permanente
               Positioned(
+                bottom: 80,
+                left: 0,
+                right: 0,
+                child: Center(
+                  child: ElevatedButton.icon(
+                    icon: const Icon(Icons.lightbulb, color: Colors.white),
+                    label: const Text(
+                      'Resolver',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 24,
+                        vertical: 12,
+                      ),
+                    ),
+                    onPressed:
+                        provider.isAutoSolving ? null : () => provider.autoSolve(),
+                  ),
+                ),
+              ),
+              // Botón de reinicio permanente
+              Positioned(
                 bottom: 24,
                 left: 0,
                 right: 0,

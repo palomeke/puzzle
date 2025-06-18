@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../models/tile.dart';
 import '../models/game_mode.dart';
 import '../models/difficulty.dart';
+import '../services/auto_solve_service.dart';
 
 class PuzzleProvider extends ChangeNotifier {
   List<Tile> tiles = [];
@@ -21,6 +22,7 @@ class PuzzleProvider extends ChangeNotifier {
   bool isTimerRunning = false;
   bool isVictory = false;
   int? lastTappedIndex;
+  bool isAutoSolving = false;
 
   void initialize(
     GameMode selectedMode,
@@ -36,6 +38,7 @@ class PuzzleProvider extends ChangeNotifier {
     _timer?.cancel();
     isTimerRunning = false;
     lastTappedIndex = null;
+    isAutoSolving = false;
 
     final total = gridSize * gridSize;
     tiles = List.generate(total, (index) {
@@ -63,6 +66,7 @@ class PuzzleProvider extends ChangeNotifier {
   }
 
   void shuffle() {
+    isAutoSolving = false;
     final indices = List<int>.generate(tiles.length, (i) => i);
     final rand = Random();
     do {
@@ -103,7 +107,8 @@ class PuzzleProvider extends ChangeNotifier {
     isTimerRunning = false;
   }
 
-  void moveTile(int idx) {
+  void moveTile(int idx, [bool fromAuto = false]) {
+    if (isAutoSolving && !fromAuto) return;
     lastTappedIndex = idx;
     final tile = tiles.firstWhere((t) => t.currentIndex == idx);
     final empty = tiles.firstWhere((t) => t.isEmpty);
@@ -143,6 +148,24 @@ class PuzzleProvider extends ChangeNotifier {
 
   void toggleVibration() {
     isVibrationOn = !isVibrationOn;
+    notifyListeners();
+  }
+
+  Future<void> autoSolve() async {
+    if (isAutoSolving) return;
+    isAutoSolving = true;
+    notifyListeners();
+
+    final solver = AutoSolveService(gridSize);
+    final moves = await solver.solve(tiles);
+    for (final id in moves) {
+      final tile =
+          tiles.firstWhere((t) => (t.number ?? t.correctIndex + 1) == id);
+      moveTile(tile.currentIndex, true);
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+
+    isAutoSolving = false;
     notifyListeners();
   }
 
