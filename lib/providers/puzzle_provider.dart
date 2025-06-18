@@ -78,18 +78,24 @@ class PuzzleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool _isSolvable(List<int> perm) {
+  bool _isSolvable(List<int> positions) {
+    final n = positions.length;
+    final board = List<int>.filled(n, 0);
+    for (var tile = 0; tile < n; tile++) {
+      board[positions[tile]] = tile;
+    }
+
     var inv = 0;
-    for (var i = 0; i < perm.length; i++) {
-      for (var j = i + 1; j < perm.length; j++) {
-        if (perm[i] != perm.length - 1 &&
-            perm[j] != perm.length - 1 &&
-            perm[i] > perm[j])
+    for (var i = 0; i < n; i++) {
+      for (var j = i + 1; j < n; j++) {
+        if (board[i] != n - 1 && board[j] != n - 1 && board[i] > board[j]) {
           inv++;
+        }
       }
     }
+
     if (gridSize.isOdd) return inv.isEven;
-    final row = perm.indexOf(perm.length - 1) ~/ gridSize;
+    final row = board.indexOf(n - 1) ~/ gridSize;
     return (inv + row).isOdd;
   }
 
