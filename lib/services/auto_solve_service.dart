@@ -36,9 +36,16 @@ class AutoSolveService {
     return dist;
   }
 
-  /// Resuelve usando A* y devuelve la lista de números movidos.
+  /// Resuelve usando A* y devuelve la lista de identificadores movidos.
+  ///
+  /// Cada ficha se representa por su `number` en modo numérico o por su
+  /// índice correcto en modo imagen. El espacio vacío se representa con 0.
   Future<List<int>> solve(List<Tile> initialTiles) async {
-    final start = initialTiles.map((t) => t.number ?? 0).toList();
+    final sorted = [...initialTiles]
+      ..sort((a, b) => a.currentIndex.compareTo(b.currentIndex));
+    final start = sorted
+        .map((t) => t.isEmpty ? 0 : (t.number ?? t.correctIndex + 1))
+        .toList();
     if (ListEquality().equals(start, goalState)) return [];
 
     final open = PriorityQueue<_Node>((a, b) => a.f.compareTo(b.f));
