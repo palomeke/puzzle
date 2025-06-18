@@ -71,7 +71,7 @@ class PuzzleProvider extends ChangeNotifier {
     final rand = Random();
     do {
       indices.shuffle(rand);
-    } while (!_isSolvable(indices));
+    } while (!_isSolvable(indices) || _isSolved(indices));
     for (var i = 0; i < tiles.length; i++) {
       tiles[i] = tiles[i].copyWith(currentIndex: indices[i]);
     }
@@ -91,6 +91,13 @@ class PuzzleProvider extends ChangeNotifier {
     if (gridSize.isOdd) return inv.isEven;
     final row = perm.indexOf(perm.length - 1) ~/ gridSize;
     return (inv + row).isOdd;
+  }
+
+  bool _isSolved(List<int> perm) {
+    for (var i = 0; i < perm.length; i++) {
+      if (perm[i] != i) return false;
+    }
+    return true;
   }
 
   void startTimer() {
