@@ -132,6 +132,7 @@ class GameScreen extends StatelessWidget {
                       ),
                     ),
                     onPressed:
+
                         provider.isAutoSolving || provider.difficulty == Difficulty.hard
                             ? null
                             : () => provider.autoSolve(),
@@ -187,6 +188,12 @@ class GameScreen extends StatelessWidget {
                   ],
                 ),
               ),
+
+                        provider.isAutoSolving ? null : () => provider.autoSolve(),
+                  ),
+                ),
+              ),
+
               // Botón de reinicio permanente
               Positioned(
                 bottom: 24,

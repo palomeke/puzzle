@@ -24,6 +24,7 @@ class PuzzleProvider extends ChangeNotifier {
   bool isVictory = false;
   int? lastTappedIndex;
   bool isAutoSolving = false;
+
   Duration autoSolveSpeed = const Duration(milliseconds: 300);
   bool _cancelAutoSolve = false;
 
@@ -173,7 +174,7 @@ class PuzzleProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Calcula algunos movimientos sugeridos utilizando el auto-solver.
+
   Future<void> updateSuggestion() async {
     final solver = AutoSolveService(gridSize);
     final moves = await solver.solve(tiles);
@@ -193,11 +194,17 @@ class PuzzleProvider extends ChangeNotifier {
     }
     isAutoSolving = true;
     _cancelAutoSolve = false;
+
+  Future<void> autoSolve() async {
+    if (isAutoSolving) return;
+    isAutoSolving = true;
+
     notifyListeners();
 
     final solver = AutoSolveService(gridSize);
     final moves = await solver.solve(tiles);
     for (final id in moves) {
+
       if (_cancelAutoSolve) break;
       final tile =
           tiles.firstWhere((t) => (t.number ?? t.correctIndex + 1) == id);
@@ -219,6 +226,17 @@ class PuzzleProvider extends ChangeNotifier {
 
   void stopAutoSolve() {
     _cancelAutoSolve = true;
+  }
+
+=======
+      final tile =
+          tiles.firstWhere((t) => (t.number ?? t.correctIndex + 1) == id);
+      moveTile(tile.currentIndex, true);
+      await Future.delayed(const Duration(milliseconds: 300));
+    }
+
+    isAutoSolving = false;
+    notifyListeners();
   }
 
   void setDifficulty(Difficulty d) {
